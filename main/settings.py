@@ -32,7 +32,6 @@ ALLOWED_HOSTS = ["127.0.0.1", "oop-shop-core.herokuapp.com"]
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
