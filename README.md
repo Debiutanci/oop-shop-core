@@ -1,1 +1,1 @@
-# chess-core
+# oop-shop-core

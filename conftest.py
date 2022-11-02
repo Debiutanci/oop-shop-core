@@ -9,7 +9,7 @@ from rest_framework.test import APIClient as Client
 
 def pytest_configure():
     # config vars
-    settings.PROJECT = "smenu-core"
+    settings.PROJECT = "oop-shop-core"
 
     # config database
     # TODO ??
