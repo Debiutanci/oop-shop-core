@@ -27,3 +27,44 @@ class Product(OopShopModel):
 
     def display():
         ...
+
+class Manufacturer(models.Model):
+	identifier = models.CharField(max_length=100, null=False)
+	name = models.CharField(max_length=100, null=False)
+	description = models.CharField(max_length=100, null=False)
+
+
+class Collection(models.Model):
+	identifier = models.CharField(max_length=100, null=False)
+	name = models.CharField(max_length=100, null=False)
+	description = models.CharField(max_length=100, null=True)
+
+
+class Category(models.Model):
+	identifier = models.CharField(max_length=100, null=False)
+	name = models.CharField(max_length=100, null=False)
+	description = models.CharField(max_length=100, null=True)
+
+
+class Product(models.Model):
+	identifier = models.CharField(max_length=100, null=False)
+	category = models.ForeignKey(null=False)
+	manufacturer = models.ForeignKey(null=False)
+	collection = models.ForeignKey(null=False)
+	name = models.CharField(max_length=100, null=False)
+	description = models.CharField(max_length=100, null=False)
+	price = models.CharField(max_length=100, null=False)
+	color = models.CharField(max_length=100, null=False)
+
+
+class Order(models.Model):
+	name = models.CharField(max_length=100, null=False)
+	user = models.ForeignKey(null=False)
+	date = models.CharField(max_length=100, null=False)
+
+
+class OrderedProduct(models.Model):
+	product = models.ForeignKey(null=False)
+	order = models.ForeignKey(null=False)
+	price = models.CharField(max_length=100, null=False)
+	quantity = models.CharField(max_length=100, null=False)
