@@ -11,7 +11,7 @@ class ManufacturerViewSet(ModelViewSet):  # pylint: disable=R0901
 	queryset = models.Manufacturer.objects.all()
 	lookup_field = "identifier"
 	lookup_url_kwarg = "identifier"
-	http_method_names = ["create", "update", "retrieve", "list"]
+	http_method_names = ["post", "get", "put"]
 
 
 class CollectionViewSet(ModelViewSet):  # pylint: disable=R0901
@@ -19,7 +19,7 @@ class CollectionViewSet(ModelViewSet):  # pylint: disable=R0901
 	queryset = models.Collection.objects.all()
 	lookup_field = "identifier"
 	lookup_url_kwarg = "identifier"
-	http_method_names = ["create", "update", "retrieve", "list"]
+	http_method_names = ["post", "get", "put"]
 
 
 class CategoryViewSet(ModelViewSet):  # pylint: disable=R0901
@@ -27,7 +27,7 @@ class CategoryViewSet(ModelViewSet):  # pylint: disable=R0901
 	queryset = models.Category.objects.all()
 	lookup_field = "identifier"
 	lookup_url_kwarg = "identifier"
-	http_method_names = ["create", "update", "retrieve", "list"]
+	http_method_names = ["post", "get", "put"]
 
 
 class ProductViewSet(ModelViewSet):  # pylint: disable=R0901
@@ -35,7 +35,7 @@ class ProductViewSet(ModelViewSet):  # pylint: disable=R0901
 	queryset = models.Product.objects.all()
 	lookup_field = "identifier"
 	lookup_url_kwarg = "identifier"
-	http_method_names = ["create", "update", "retrieve", "list"]
+	http_method_names = ["post", "get", "put"]
 
 
 class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
@@ -43,7 +43,7 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 	queryset = models.Order.objects.all()
 	lookup_field = "identifier"
 	lookup_url_kwarg = "identifier"
-	http_method_names = ["create", "update", "retrieve", "list"]
+	http_method_names = ["post", "get", "put"]
 
 	filter_backends = [filters.SearchFilter, filters.OrderingFilter]
 	search_fields = ["user"]
