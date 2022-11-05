@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters
-from api import models, serializers
+from api import models, serializers, exceptions
+from rest_framework.exceptions import PermissionDenied
 
 
 class ManufacturerViewSet(ModelViewSet):  # pylint: disable=R0901
@@ -52,6 +53,24 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 			qs.order_by("+name")
 		return qs
 
+	def create(self, request, *args, **kwargs):  # noqa:W0221
+		if not request.user:
+			raise PermissionDenied(detail="You must be log in!")
+
+		serializer_class = self.get_serializer_class()
+		serializer = serializer_class(data=request.data)
+		if not serializer.is_valid():
+			raise exceptions.BadRequest(detail=serializer.errors)
+
+		data = {
+			"meals": serializer.validated_data["meals"],
+			"restaurant": serializer.validated_data["restaurant"],
+			"table": serializer.validated_data["table"]
+		}
+
+		serializer = serializers.OrderSerializer(data=data)
+		if not serializer.is_valid():
+			raise exceptions.BadRequest(detail=serializer.errors)
 
 class OrderedProductViewSet(ModelViewSet):  # pylint: disable=R0901
 	serializer_class = serializers.OrderedProductSerializer

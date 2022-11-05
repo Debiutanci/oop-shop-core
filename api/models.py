@@ -67,6 +67,7 @@ class Order(OopShopModel):
     STATUS = [("OPE", "open"), ("CON", "confirmed"), ("COM", "completed"), ("CAN", "canceled")]
 
     status = models.CharField(choices=STATUS, max_length=3, default="OPE")
+    price = models.FloatField()
     user = models.CharField(max_length=20, null=False)
     date = models.CharField(max_length=100, null=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -98,3 +99,11 @@ class OrderedProduct(OopShopModel):
             "price": self.price,
             "quantity": self.quantity
         }
+
+
+class Cart(OopShopModel):
+    user = models.CharField(max_length=20, null=False, unique=True)
+
+
+class CartProductRel(OopShopModel):
+    pass

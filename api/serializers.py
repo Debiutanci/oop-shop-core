@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 
 
 class ManufacturerSerializer(serializers.ModelSerializer):
-	identifier = serializers.IntegerField(read_only=True)
+	identifier = serializers.CharField(read_only=True)
 
 	class Meta:
 		model = models.Manufacturer
@@ -15,7 +15,7 @@ class ManufacturerSerializer(serializers.ModelSerializer):
 
 
 class CollectionSerializer(serializers.ModelSerializer):
-	identifier = serializers.IntegerField(read_only=True)
+	identifier = serializers.CharField(read_only=True)
 
 	class Meta:
 		model = models.Collection
@@ -26,7 +26,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-	identifier = serializers.IntegerField(read_only=True)
+	identifier = serializers.CharField(read_only=True)
 
 	class Meta:
 		model = models.Category
@@ -37,7 +37,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-	identifier = serializers.IntegerField(read_only=True)
+	identifier = serializers.CharField(read_only=True)
 	category = serializers.CharField()
 	manufacturer = serializers.CharField()
 	collection = serializers.CharField()
@@ -60,11 +60,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-	identifier = serializers.IntegerField(read_only=True)
+	identifier = serializers.CharField(read_only=True)
+	products = serializers.DictField(child=serializers.IntegerField())
+	status = serializers.ReadOnlyField(source="get_status_display")
+	cart = serializers.CharField()
 
 	class Meta:
 		model = models.Order
-		fields = ("user", "date")
+		fields = ("user", "date", "products", "status")
 
 	def validate(self, data):  # noqa:W0221
 		return data
@@ -81,9 +84,9 @@ class OrderedProductSerializer(serializers.ModelSerializer):
 
 	def validate(self, data):  # noqa:W0221
 		if not models.Product.objects.filter(identifier=data["product"]).exists():
-			raise ValidationError(f"Product with identifier{ data['product']} does not exist")
+			raise ValidationError(f"Product with identifier{data['product']} does not exist")
 		data["product"] = models.Product.objects.get(product=data["product"])
 		if not models.Order.objects.filter(identifier=data["order"]).exists():
-			raise ValidationError(f"Order with identifier{ data['order']} does not exist")
+			raise ValidationError(f"Order with identifier{data['order']} does not exist")
 		data["order"] = models.Order.objects.get(order=data["order"])
 		return data
