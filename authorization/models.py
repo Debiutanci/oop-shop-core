@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 
+
 class User(models.Model):
     identifier = models.AutoField(primary_key=True)
     username = models.CharField(max_length=150, unique=True)

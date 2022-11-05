@@ -1,7 +1,9 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters
-from api import models, serializers, exceptions
+from api import models, serializers, exceptions, utils
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class ManufacturerViewSet(ModelViewSet):  # pylint: disable=R0901
@@ -47,6 +49,11 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 	search_fields = ["user"]
 	ordering_fields = ["user"]
 
+	def get_serializer_class(self):
+		if self.action in ["create"]:
+			return serializers.OrderCreateSerializer
+		return serializers.OrderSerializer
+
 	def get_queryset(self, *args, **kwargs):
 		qs = super().get_queryset(*args, **kwargs)
 		if "search" not in self.request.GET:
@@ -54,27 +61,29 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 		return qs
 
 	def create(self, request, *args, **kwargs):  # noqa:W0221
-		if not request.user:
-			raise PermissionDenied(detail="You must be log in!")
+		# TODO auth part
+		# if not request.user:
+		# 	raise PermissionDenied(detail="You must be log in!")
 
 		serializer_class = self.get_serializer_class()
 		serializer = serializer_class(data=request.data)
 		if not serializer.is_valid():
 			raise exceptions.BadRequest(detail=serializer.errors)
 
+		cart = serializer.validated_data["cart"]
+
 		data = {
-			"meals": serializer.validated_data["meals"],
-			"restaurant": serializer.validated_data["restaurant"],
-			"table": serializer.validated_data["table"]
+			"user": serializer.validated_data["user"],
+			"comment": serializer.validated_data["comment"],
+			"price": serializer.validated_data["price"]
 		}
 
 		serializer = serializers.OrderSerializer(data=data)
 		if not serializer.is_valid():
 			raise exceptions.BadRequest(detail=serializer.errors)
 
-class OrderedProductViewSet(ModelViewSet):  # pylint: disable=R0901
-	serializer_class = serializers.OrderedProductSerializer
-	queryset = models.OrderedProduct.objects.all()
-	lookup_field = "identifier"
-	lookup_url_kwarg = "identifier"
-	http_method_names = ["create", "update", "retrieve", "list"]
+		order = serializer.save()
+		order.save()
+
+		utils.assign_product_to_order(order, cart.cart_products)
+		return Response(order.json(), status=status.HTTP_201_CREATED)

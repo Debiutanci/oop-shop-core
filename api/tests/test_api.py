@@ -4,7 +4,7 @@ from django.db import models
 
 
 @pytest.mark.django_db
-class TestApi_oop:
+class TestApi:
 	def test_urls(self):
 		c = Client()
 		response = c.get("http://testserver/api_oop/")

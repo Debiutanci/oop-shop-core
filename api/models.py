@@ -47,9 +47,9 @@ class Category(BaseOopShopModel):
 
 
 class Product(OopShopModel):
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=False)
-    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.SET_NULL, null=False)
-    collection = models.ForeignKey(Collection, on_delete=models.SET_NULL, null=False)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, null=False, related_name="products")
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, null=False, related_name="products")
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=False, related_name="products")
     name = models.CharField(max_length=100, null=False)
     description = models.TextField()
     price = models.CharField(max_length=100, null=False)
@@ -69,7 +69,6 @@ class Order(OopShopModel):
     status = models.CharField(choices=STATUS, max_length=3, default="OPE")
     price = models.FloatField()
     user = models.CharField(max_length=20, null=False)
-    date = models.CharField(max_length=100, null=False)
     created = models.DateTimeField(auto_now_add=True)
     last_update = models.DateTimeField(auto_now=True)
     comment = models.TextField(default=None, null=True)
@@ -87,16 +86,16 @@ class Order(OopShopModel):
 
 
 class OrderedProduct(OopShopModel):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=False)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=False)
-    price = models.FloatField()
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=False, related_name="ordered_products")
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, null=False, related_name="ordered_products")
+    single_product_price = models.FloatField()
     quantity = models.IntegerField()
 
     def display(self) -> dict:
         return {
             "identifier": self.identifier,
             "product": self.product.name,
-            "price": self.price,
+            "price": self.single_product_price,
             "quantity": self.quantity
         }
 
@@ -104,6 +103,21 @@ class OrderedProduct(OopShopModel):
 class Cart(OopShopModel):
     user = models.CharField(max_length=20, null=False, unique=True)
 
+    def display(self) -> dict:
+        return {}
+
+    def clean(self):
+        for relation in self.cart_products.all():
+            self.remove(relation)
+
 
 class CartProductRel(OopShopModel):
-    pass
+    cart = models.ForeignKey(Cart, on_delete=models.PROTECT, null=False, related_name="cart_products")
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=False, related_name="cart_products")
+    quantity = models.IntegerField()
+
+    def display(self) -> dict:
+        return {
+            "identifier": self.identifier,
+            "product": self.product.identifier
+        }

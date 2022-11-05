@@ -1,4 +1,4 @@
-from api import models
+from api import models, validators
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -59,28 +59,46 @@ class ProductSerializer(serializers.ModelSerializer):
 		return data
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderCreateSerializer(serializers.ModelSerializer):
 	identifier = serializers.CharField(read_only=True)
-	products = serializers.DictField(child=serializers.IntegerField())
 	status = serializers.ReadOnlyField(source="get_status_display")
 	cart = serializers.CharField()
 
 	class Meta:
 		model = models.Order
-		fields = ("user", "date", "products", "status")
+		fields = ("user", "comment", "cart")
+
+	def validate(self, attrs):
+		validators.validate_create_order(attrs)
+		last_price = 0.0
+		for cart_product in attrs["cart"].cart_products.all():
+			last_price += cart_product.product.price
+		attrs["price"] = last_price
+		return attrs
+
+
+class OrderSerializer(serializers.ModelSerializer):
+	identifier = serializers.CharField(read_only=True)
+	ordered_products = serializers.ReadOnlyField()
+	status = serializers.ReadOnlyField(source="get_status_display")
+	created = serializers.ReadOnlyField()
+	last_update = serializers.ReadOnlyField()
+
+	class Meta:
+		model = models.Order
+		fields = ("status", "price", "user", "created", "last_update", "comment", "ordered_products")
 
 	def validate(self, data):  # noqa:W0221
 		return data
 
 
 class OrderedProductSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(read_only=True)
 	product = serializers.CharField()
 	order = serializers.CharField()
 
 	class Meta:
 		model = models.OrderedProduct
-		fields = ("id", "product", "order", "price", "quantity")
+		fields = ("product", "order", "price", "quantity")
 
 	def validate(self, data):  # noqa:W0221
 		if not models.Product.objects.filter(identifier=data["product"]).exists():
