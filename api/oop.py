@@ -35,8 +35,7 @@ class ColorMap:
 class Color:
     @staticmethod
     def get_color_hex(name):
-
-        ...
+        return name
 
     def __init__(self, name) -> None:
         self.name = name

@@ -1,70 +1,100 @@
 from django.db import models
 from abc import abstractmethod
 from django.utils.crypto import get_random_string
+from api import exceptions
 
 
 def random_string_length_20():
     return get_random_string(length=20)
-# Create your models here.
+
 
 class OopShopModel(models.Model):
     identifier = models.CharField(max_length=20, default=random_string_length_20)
 
+    class Meta:
+        abstract = True
+
     @abstractmethod
-    def display(self):
-        ...
+    def display(self) -> dict:
+        raise exceptions.MustBeOverWrittenException()
 
 
 class BaseOopShopModel(OopShopModel):
-    name = ...
-    description = ...
+    name = models.CharField(max_length=100, null=False)
+    description = models.TextField()
+
+    class Meta:
+        abstract = True
+
+    def display(self) -> dict:
+        return {
+            "identifier": self.identifier,
+            "name": self.name,
+            "description": self.description
+        }
+
+
+class Manufacturer(BaseOopShopModel):
+    pass
+
+
+class Collection(BaseOopShopModel):
+    pass
+
+
+class Category(BaseOopShopModel):
+    pass
 
 
 class Product(OopShopModel):
-    PRODUCT_TYPES = [("I", "instrument"), ("A", "accessory"), ("", ""), ("", "")]
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=False)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.SET_NULL, null=False)
+    collection = models.ForeignKey(Collection, on_delete=models.SET_NULL, null=False)
+    name = models.CharField(max_length=100, null=False)
+    description = models.TextField()
+    price = models.CharField(max_length=100, null=False)
+    color = models.CharField(max_length=100, null=False)
 
-    name = ...
-
-    def display():
-        ...
-
-class Manufacturer(models.Model):
-	identifier = models.CharField(max_length=100, null=False)
-	name = models.CharField(max_length=100, null=False)
-	description = models.CharField(max_length=100, null=False)
-
-
-class Collection(models.Model):
-	identifier = models.CharField(max_length=100, null=False)
-	name = models.CharField(max_length=100, null=False)
-	description = models.CharField(max_length=100, null=True)
+    def display(self) -> dict:
+        return {
+            "identifier": self.identifier,
+            "name": self.name,
+            "description": self.description
+        }
 
 
-class Category(models.Model):
-	identifier = models.CharField(max_length=100, null=False)
-	name = models.CharField(max_length=100, null=False)
-	description = models.CharField(max_length=100, null=True)
+class Order(OopShopModel):
+    STATUS = [("OPE", "open"), ("CON", "confirmed"), ("COM", "completed"), ("CAN", "canceled")]
+
+    status = models.CharField(choices=STATUS, max_length=3, default="OPE")
+    user = models.CharField(max_length=20, null=False)
+    date = models.CharField(max_length=100, null=False)
+    created = models.DateTimeField(auto_now_add=True)
+    last_update = models.DateTimeField(auto_now=True)
+    comment = models.TextField(default=None, null=True)
+
+    def display(self) -> dict:
+        return {
+            "identifier": self.identifier,
+            "status": self.status,
+            "user": self.user,
+            "date": self.date,
+            "created": self.created,
+            "last_update": self.last_update,
+            "comment": self.comment
+        }
 
 
-class Product(models.Model):
-	identifier = models.CharField(max_length=100, null=False)
-	category = models.ForeignKey(null=False)
-	manufacturer = models.ForeignKey(null=False)
-	collection = models.ForeignKey(null=False)
-	name = models.CharField(max_length=100, null=False)
-	description = models.CharField(max_length=100, null=False)
-	price = models.CharField(max_length=100, null=False)
-	color = models.CharField(max_length=100, null=False)
+class OrderedProduct(OopShopModel):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=False)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=False)
+    price = models.FloatField()
+    quantity = models.IntegerField()
 
-
-class Order(models.Model):
-	name = models.CharField(max_length=100, null=False)
-	user = models.ForeignKey(null=False)
-	date = models.CharField(max_length=100, null=False)
-
-
-class OrderedProduct(models.Model):
-	product = models.ForeignKey(null=False)
-	order = models.ForeignKey(null=False)
-	price = models.CharField(max_length=100, null=False)
-	quantity = models.CharField(max_length=100, null=False)
+    def display(self) -> dict:
+        return {
+            "identifier": self.identifier,
+            "product": self.product.name,
+            "price": self.price,
+            "quantity": self.quantity
+        }

@@ -1,14 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters
-from api_oop import models, serializers
-
-
-class UserViewSet(ModelViewSet):  # pylint: disable=R0901
-	serializer_class = serializers.UserSerializer
-	queryset = models.User.objects.all()
-	lookup_field = "identifier"
-	lookup_url_kwarg = "identifier"
-	http_method_names = ["create", "update", "retrieve", "list"]
+from api import models, serializers
 
 
 class ManufacturerViewSet(ModelViewSet):  # pylint: disable=R0901

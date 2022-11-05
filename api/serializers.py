@@ -1,62 +1,50 @@
-from api_oop import models
+from api import models
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 
-class UserSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(read_only=True)
-
-	class Meta:
-		model = models.User
-		fields = ("id", "identifier", "name", "surname", "email", "age")
-
-	def validate(self, data):  # noqa:W0221
-		data["name"] = data["name"].strip()
-		return data
-
-
 class ManufacturerSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(read_only=True)
+	identifier = serializers.IntegerField(read_only=True)
 
 	class Meta:
 		model = models.Manufacturer
-		fields = ("id", "identifier", "name", "description")
+		fields = ("identifier", "name", "description")
 
 	def validate(self, data):  # noqa:W0221
 		return data
 
 
 class CollectionSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(read_only=True)
+	identifier = serializers.IntegerField(read_only=True)
 
 	class Meta:
 		model = models.Collection
-		fields = ("id", "identifier", "name", "description")
+		fields = ("identifier", "name", "description")
 
 	def validate(self, data):  # noqa:W0221
 		return data
 
 
 class CategorySerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(read_only=True)
+	identifier = serializers.IntegerField(read_only=True)
 
 	class Meta:
 		model = models.Category
-		fields = ("id", "identifier", "name", "description")
+		fields = ("identifier", "name", "description")
 
 	def validate(self, data):  # noqa:W0221
 		return data
 
 
 class ProductSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(read_only=True)
+	identifier = serializers.IntegerField(read_only=True)
 	category = serializers.CharField()
 	manufacturer = serializers.CharField()
 	collection = serializers.CharField()
 
 	class Meta:
 		model = models.Product
-		fields = ("id", "identifier", "category", "manufacturer", "collection", "name", "description", "price", "color")
+		fields = ("identifier", "category", "manufacturer", "collection", "name", "description", "price", "color")
 
 	def validate(self, data):  # noqa:W0221
 		if not models.Category.objects.filter(identifier=data["category"]).exists():
@@ -72,17 +60,13 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(read_only=True)
-	user = serializers.CharField()
+	identifier = serializers.IntegerField(read_only=True)
 
 	class Meta:
 		model = models.Order
-		fields = ("id", "name", "user", "date")
+		fields = ("user", "date")
 
 	def validate(self, data):  # noqa:W0221
-		if not models.User.objects.filter(identifier=data["user"]).exists():
-			raise ValidationError(f"User with identifier{ data['user']} does not exist")
-		data["user"] = models.User.objects.get(user=data["user"])
 		return data
 
 
