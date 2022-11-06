@@ -61,16 +61,21 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class OrderCreateSerializer(serializers.ModelSerializer):
 	identifier = serializers.CharField(read_only=True)
-	status = serializers.ReadOnlyField(source="get_status_display")
 	cart = serializers.CharField()
 
 	class Meta:
 		model = models.Order
-		fields = ("user", "comment", "cart")
+		fields = ("identifier", "user", "comment", "cart")
 
 	def validate(self, attrs):
 		validators.validate_create_order(attrs)
 		last_price = 0.0
+
+		if not models.Cart.objects.filter(identifier=attrs["cart"]).exists():
+			raise ValidationError(f"Cart with identifier {attrs['cart']} does not exist!")
+		attrs["cart"] = models.Cart.objects.get(identifier=attrs["cart"])
+
+
 		for cart_product in attrs["cart"].cart_products.all():
 			last_price += cart_product.product.price
 		attrs["price"] = last_price
@@ -86,7 +91,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = models.Order
-		fields = ("status", "price", "user", "created", "last_update", "comment", "ordered_products")
+		fields = ("identifier", "status", "price", "user", "created", "last_update", "comment", "ordered_products")
 
 	def validate(self, data):  # noqa:W0221
 		return data

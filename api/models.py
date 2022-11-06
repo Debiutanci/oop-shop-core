@@ -47,13 +47,13 @@ class Category(BaseOopShopModel):
 
 
 class Product(OopShopModel):
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, null=False, related_name="products")
-    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, null=False, related_name="products")
-    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=False, related_name="products")
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, related_name="products")
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT, null=True, related_name="products")
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, related_name="products")
     name = models.CharField(max_length=100, null=False)
     description = models.TextField()
-    price = models.CharField(max_length=100, null=False)
-    color = models.CharField(max_length=100, null=False)
+    price = models.FloatField()
+    color = models.CharField(max_length=100, null=True)
 
     def display(self) -> dict:
         return {
@@ -74,14 +74,18 @@ class Order(OopShopModel):
     comment = models.TextField(default=None, null=True)
 
     def display(self) -> dict:
+        products = []
+        for obj in self.ordered_products.all():
+            products.append(obj.display())
+
         return {
             "identifier": self.identifier,
             "status": self.status,
             "user": self.user,
-            "date": self.date,
             "created": self.created,
             "last_update": self.last_update,
-            "comment": self.comment
+            "comment": self.comment,
+            "products": products
         }
 
 
@@ -93,7 +97,6 @@ class OrderedProduct(OopShopModel):
 
     def display(self) -> dict:
         return {
-            "identifier": self.identifier,
             "product": self.product.name,
             "price": self.single_product_price,
             "quantity": self.quantity
