@@ -74,9 +74,10 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 
 		data = {
 			"user": serializer.validated_data["user"],
-			"comment": serializer.validated_data["comment"],
 			"price": serializer.validated_data["price"]
 		}
+		if "comment" in serializer.validated_data:
+			data["comment"] = serializer.validated_data["comment"],
 
 		serializer = serializers.OrderSerializer(data=data)
 		if not serializer.is_valid():
@@ -86,4 +87,4 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 		order.save()
 
 		utils.assign_product_to_order(order, cart.cart_products)
-		return Response(order.json(), status=status.HTTP_201_CREATED)
+		return Response(order.display(), status=status.HTTP_201_CREATED)

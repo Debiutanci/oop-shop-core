@@ -1,6 +1,8 @@
 import pytest
 from rest_framework.test import APIClient as Client
 from api import models
+from authorization.models import User
+from api.tests import utils
 
 
 @pytest.mark.django_db
@@ -16,6 +18,13 @@ class TestApi:
 			"products": "http://testserver/api/products/",
 			"orders": "http://testserver/api/orders/",
 		}
+
+	def test_sample_database(self, sample_database):
+		sample_database()
+		assert models.Category.objects.count() == 1
+		assert models.Collection.objects.count() == 1
+		assert models.Manufacturer.objects.count() == 1
+		assert models.Product.objects.count() == 1
 
 	def test_positive_create_manufacturer(self):
 		c = Client()
@@ -61,3 +70,27 @@ class TestApi:
 			"name": "ikypgborezsubwdpqiqs",
 			"description": "bfxmhbqaxhkkvrmxnfnf",
 		}
+
+	def test_create_order(self, sample_database):
+		c = Client()
+		sample_database()
+
+		cart = models.Cart.objects.all()[0]
+		user = User.objects.all()[0]
+
+		r = c.post("/api/orders/", {
+			"user": user.identifier,
+			"cart": cart.identifier
+		})
+
+		assert r.status_code == 201
+		order = models.Order.objects.last()
+		assert r.json() == {
+            "identifier": order.identifier,
+            "status": "OPE",
+            "user": str(user.identifier),
+            "created": utils.date_format(order.created),
+            "last_update": utils.date_format(order.last_update),
+            "comment": None,
+            "products": [{'price': 20.2, 'product': 'pianino', 'quantity': 2}]
+        }

@@ -2,7 +2,7 @@ from api import models, exceptions
 
 
 def assign_product_to_order(order: models.Order, cart_products: list[models.CartProductRel]):
-    for cart_product in cart_products:
+    for cart_product in cart_products.all():
         try:
             models.OrderedProduct.objects.create(
                 order=order,
