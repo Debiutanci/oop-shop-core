@@ -19,14 +19,18 @@ class UserViewSet(ModelViewSet):  # noqa:R0901
     def post(self, request):
         serializer = serializers.UserSerializer(data=request.data)
         if not serializer.is_valid():
-            raise ValidationError(serializer.errors)
+            raise exceptions.BadRequest(serializer.errors)
         serializer.save()
         return Response(serializer.data, status=201)
 
     @action(
-        detail=False, url_path="login", methods=["post"]
+        detail=False, url_path="login", methods=["post"], serializer_class=serializers.UserLoginSerializer
     )
     def login(self, request):
+        serializer = serializers.UserLoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            raise exceptions.BadRequest(serializer.errors)
+
         email = request.data['email']
         password = request.data['password']  # noqa:W0612 TODO
         user = models.User.objects.filter(email=email).first()
