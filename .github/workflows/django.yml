@@ -28,7 +28,7 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        pytest -x -vv
+        python manage.py test
     - name: Test with pylama
       run: |
         pylama
