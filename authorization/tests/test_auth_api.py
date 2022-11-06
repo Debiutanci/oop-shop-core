@@ -71,3 +71,13 @@ class TestUsers:
         })
         assert response.status_code == 400
         assert models.User.objects.count() == 0
+    
+    def test_invalid_login(self, client):
+        c = client()
+        response = c.post("/auth/users/login/", {
+            "username": "       test2@mail.pl       ",
+            "password": "password21234"
+        })
+        assert response.status_code == 400
+        assert models.User.objects.count() == 0
+        assert response.json() == {'email': ['This field is required.']} 
