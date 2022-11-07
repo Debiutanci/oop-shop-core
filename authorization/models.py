@@ -13,7 +13,7 @@ class User(models.Model):
 
     def save(self, *args, **kwargs):
         self.password = make_password(self.password, settings.PASSWORD_HASH_KEY, settings.PASSWORD_HASH_ALG)
-        super(User, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"{self.identifier}, {self.name}, {self.surname}"
