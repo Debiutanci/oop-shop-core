@@ -14,6 +14,7 @@ class TestApi:
 		assert response.json() == {
 			"manufacturers": "http://testserver/api/manufacturers/",
 			"collections": "http://testserver/api/collections/",
+			"favourities": "http://testserver/api/favourities/",
 			"categories": "http://testserver/api/categories/",
 			"products": "http://testserver/api/products/",
 			"orders": "http://testserver/api/orders/",
@@ -94,3 +95,21 @@ class TestApi:
             "comment": None,
             "products": [{'price': 20.2, 'product': 'pianino', 'quantity': 2}]
         }
+
+	def test_positive_create_favourite(self, sample_database):
+		sample_database()
+		c = Client()
+		product = models.Product.objects.last()
+
+		response = c.post("/api/favourities/", data={
+			"user": "user_id",
+			"product": product.identifier
+		})
+		assert response.status_code == 201
+
+		fav_id = models.Favourite.objects.last().identifier
+		assert response.json() == {
+			"identifier": fav_id,
+			"user": "user_id",
+			"product": product.identifier,
+		}

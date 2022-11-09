@@ -114,3 +114,18 @@ class OrderedProductSerializer(serializers.ModelSerializer):
 			raise ValidationError(f"Order with identifier{data['order']} does not exist")
 		data["order"] = models.Order.objects.get(order=data["order"])
 		return data
+
+
+class FavouriteSerializer(serializers.ModelSerializer):
+	identifier = serializers.CharField(read_only=True)
+	product = serializers.CharField()
+
+	class Meta:
+		model = models.Favourite
+		fields = ("identifier", "user", "product")
+
+	def validate(self, data):  # noqa:W0221
+		if not models.Product.objects.filter(identifier=data["product"]).exists():
+			raise ValidationError(f"Product with identifier{data['product']} does not exist")
+		data["product"] = models.Product.objects.get(product=data["product"])
+		return data
