@@ -1,6 +1,7 @@
-from api import models, validators
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
+from api import models, validators
 
 
 class ManufacturerSerializer(serializers.ModelSerializer):

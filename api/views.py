@@ -1,9 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters
-from api import models, serializers, exceptions, utils
-from rest_framework.exceptions import PermissionDenied
+from rest_framework import filters, status
 from rest_framework.response import Response
-from rest_framework import status
+
+from api import models, serializers, exceptions, utils
 
 
 class ManufacturerViewSet(ModelViewSet):  # pylint: disable=R0901
@@ -77,7 +76,7 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 			"price": serializer.validated_data["price"]
 		}
 		if "comment" in serializer.validated_data:
-			data["comment"] = serializer.validated_data["comment"],
+			data["comment"] = serializer.validated_data["comment"]
 
 		serializer = serializers.OrderSerializer(data=data)
 		if not serializer.is_valid():

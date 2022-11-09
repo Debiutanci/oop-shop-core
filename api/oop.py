@@ -1,5 +1,5 @@
 class InstrumentDisplay:
-    def display():
+    def display(self):
         ...
 
 
@@ -29,7 +29,7 @@ class ColorMap:
 
     def get_css_value(self, name):
         # TODO add validation
-        return 
+        return name
 
 
 class Color:

@@ -1,5 +1,5 @@
-from authorization.models import User
 from rest_framework.exceptions import ValidationError
+from authorization.models import User
 
 
 def validate_create_order(attrs):
