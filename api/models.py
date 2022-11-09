@@ -126,3 +126,15 @@ class CartProductRel(OopShopModel):
             "identifier": self.identifier,
             "product": self.product.identifier
         }
+
+
+class Favourite(OopShopModel):
+    user = models.CharField(max_length=20, null=False)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=False, related_name="favourite_users_list")
+
+    def display(self) -> dict:
+        return {
+            "identifier": self.identifier,
+            "user": self.user,
+            "product": self.product.identifier  # TODO other info {} ?
+        }

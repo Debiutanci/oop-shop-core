@@ -87,3 +87,11 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 
 		utils.assign_product_to_order(order, cart.cart_products)
 		return Response(order.display(), status=status.HTTP_201_CREATED)
+
+
+class FavouriteViewSet(ModelViewSet):  # pylint: disable=R0901
+	serializer_class = serializers.FavouriteSerializer
+	queryset = models.Favourite.objects.all()
+	lookup_field = "identifier"
+	lookup_url_kwarg = "identifier"
+	http_method_names = ["post", "get", "put"]
