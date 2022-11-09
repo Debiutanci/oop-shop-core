@@ -99,11 +99,11 @@ class TestApi:
 	def test_positive_create_favourite(self, sample_database):
 		sample_database()
 		c = Client()
-		product = models.Product.objects.last()
+		product = models.Product.objects.all()[0].identifier
 
 		response = c.post("/api/favourities/", data={
 			"user": "user_id",
-			"product": product.identifier
+			"product": product
 		})
 		assert response.status_code == 201
 
@@ -111,5 +111,5 @@ class TestApi:
 		assert response.json() == {
 			"identifier": fav_id,
 			"user": "user_id",
-			"product": product.identifier,
+			"product": product,
 		}

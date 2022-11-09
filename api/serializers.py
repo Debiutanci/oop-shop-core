@@ -48,15 +48,16 @@ class ProductSerializer(serializers.ModelSerializer):
 		fields = ("identifier", "category", "manufacturer", "collection", "name", "description", "price", "color")
 
 	def validate(self, data):  # noqa:W0221
+		#  TODO optional args implementation
 		if not models.Category.objects.filter(identifier=data["category"]).exists():
 			raise ValidationError(f"Category with identifier{ data['category']} does not exist")
-		data["category"] = models.Category.objects.get(category=data["category"])
+		data["category"] = models.Category.objects.get(identifier=data["category"])
 		if not models.Manufacturer.objects.filter(identifier=data["manufacturer"]).exists():
 			raise ValidationError(f"Manufacturer with identifier{ data['manufacturer']} does not exist")
-		data["manufacturer"] = models.Manufacturer.objects.get(manufacturer=data["manufacturer"])
+		data["manufacturer"] = models.Manufacturer.objects.get(identifier=data["manufacturer"])
 		if not models.Collection.objects.filter(identifier=data["collection"]).exists():
 			raise ValidationError(f"Collection with identifier{ data['collection']} does not exist")
-		data["collection"] = models.Collection.objects.get(collection=data["collection"])
+		data["collection"] = models.Collection.objects.get(identifier=data["collection"])
 		return data
 
 
@@ -109,10 +110,10 @@ class OrderedProductSerializer(serializers.ModelSerializer):
 	def validate(self, data):  # noqa:W0221
 		if not models.Product.objects.filter(identifier=data["product"]).exists():
 			raise ValidationError(f"Product with identifier{data['product']} does not exist")
-		data["product"] = models.Product.objects.get(product=data["product"])
+		data["product"] = models.Product.objects.get(identifier=data["product"])
 		if not models.Order.objects.filter(identifier=data["order"]).exists():
 			raise ValidationError(f"Order with identifier{data['order']} does not exist")
-		data["order"] = models.Order.objects.get(order=data["order"])
+		data["order"] = models.Order.objects.get(identifier=data["order"])
 		return data
 
 
@@ -127,5 +128,8 @@ class FavouriteSerializer(serializers.ModelSerializer):
 	def validate(self, data):  # noqa:W0221
 		if not models.Product.objects.filter(identifier=data["product"]).exists():
 			raise ValidationError(f"Product with identifier{data['product']} does not exist")
-		data["product"] = models.Product.objects.get(product=data["product"])
+		data["product"] = models.Product.objects.get(identifier=data["product"])
 		return data
+
+	def to_representation(self, instance):
+		return instance.display()
