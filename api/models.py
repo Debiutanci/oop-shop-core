@@ -1,6 +1,8 @@
-from django.db import models
 from abc import abstractmethod
+
+from django.db import models
 from django.utils.crypto import get_random_string
+
 from api import exceptions
 
 

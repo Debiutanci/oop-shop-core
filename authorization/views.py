@@ -1,9 +1,7 @@
 import datetime
-from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 
 import jwt
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action

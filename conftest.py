@@ -1,4 +1,3 @@
-import datetime
 import pytest
 import django
 
@@ -20,14 +19,8 @@ def pytest_configure():
 
 @pytest.fixture
 def client():
-    def factory(uid=None, roles=None):
+    def factory(uid=None, roles=None):  # noqa
         return Client()
-        if not uid:
-            return Client()
-
-        client = Client()
-        # client.credentials(HTTP_AUTHORIZATION=settings.AUTH_PREFIX + " " + token)
-        return client
 
     return factory
 

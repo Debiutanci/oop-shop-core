@@ -1,8 +1,8 @@
 import pytest
 from rest_framework.test import APIClient as Client
-from api import models
 from authorization.models import User
-from api.tests import utils
+from api import models
+from api.tests import utils  # pylint: disable=E0401
 
 
 @pytest.mark.django_db
