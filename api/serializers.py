@@ -39,9 +39,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
 	identifier = serializers.CharField(read_only=True)
-	category = serializers.CharField()
-	manufacturer = serializers.CharField()
-	collection = serializers.CharField()
+	category = serializers.CharField(allow_null=True)
+	manufacturer = serializers.CharField(allow_null=True)
+	collection = serializers.CharField(allow_null=True)
 
 	class Meta:
 		model = models.Product
@@ -49,16 +49,22 @@ class ProductSerializer(serializers.ModelSerializer):
 
 	def validate(self, data):  # noqa:W0221
 		#  TODO optional args implementation
-		if not models.Category.objects.filter(identifier=data["category"]).exists():
-			raise ValidationError(f"Category with identifier{ data['category']} does not exist")
-		data["category"] = models.Category.objects.get(identifier=data["category"])
-		if not models.Manufacturer.objects.filter(identifier=data["manufacturer"]).exists():
-			raise ValidationError(f"Manufacturer with identifier{ data['manufacturer']} does not exist")
-		data["manufacturer"] = models.Manufacturer.objects.get(identifier=data["manufacturer"])
-		if not models.Collection.objects.filter(identifier=data["collection"]).exists():
-			raise ValidationError(f"Collection with identifier{ data['collection']} does not exist")
-		data["collection"] = models.Collection.objects.get(identifier=data["collection"])
+		if "category" in data:
+			if not models.Category.objects.filter(identifier=data["category"]).exists():
+				raise ValidationError(f"Category with identifier{ data['category']} does not exist")
+			data["category"] = models.Category.objects.get(identifier=data["category"])
+		if "manufacturer" in data:
+			if not models.Manufacturer.objects.filter(identifier=data["manufacturer"]).exists():
+				raise ValidationError(f"Manufacturer with identifier{ data['manufacturer']} does not exist")
+			data["manufacturer"] = models.Manufacturer.objects.get(identifier=data["manufacturer"])
+		if "collection" in data:
+			if not models.Collection.objects.filter(identifier=data["collection"]).exists():
+				raise ValidationError(f"Collection with identifier{ data['collection']} does not exist")
+			data["collection"] = models.Collection.objects.get(identifier=data["collection"])
 		return data
+
+	def to_representation(self, obj):  # noqa:W0221
+		return obj.display()
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):
