@@ -61,7 +61,12 @@ class Product(OopShopModel):
         return {
             "identifier": self.identifier,
             "name": self.name,
-            "description": self.description
+            "description": self.description,
+            "price": self.price,
+            "color": self.color,
+            "category": self.category.name,
+            "manufacturer": self.manufacturer.name,
+            "collection": None
         }
 
 
