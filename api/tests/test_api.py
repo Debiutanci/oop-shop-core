@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.test import APIClient as Client
 from authorization.models import User
-from api import models
+from api import models, db
 from api.tests import utils  # pylint: disable=E0401
 
 
@@ -113,3 +113,11 @@ class TestApi:
 			"user": "user_id",
 			"product": product,
 		}
+
+	def test_load_db(self):
+		db.default_db()
+		assert models.Product.objects.count() == 7
+		c = Client()
+		r = c.get("/api/products/")
+		assert r.status_code == 200
+		assert len(r.json()) == 7
