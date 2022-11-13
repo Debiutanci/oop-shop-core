@@ -23,7 +23,7 @@ class TestUsers:
             "password": "invalid password"
         })
         assert response.status_code == 401
-        assert response.json() == {'detail': 'Invalid password!'} 
+        assert response.json() == {'detail': 'Invalid password!'}
         assert "jwt" not in response.cookies
 
         # test valid password
@@ -71,7 +71,7 @@ class TestUsers:
         })
         assert response.status_code == 400
         assert models.User.objects.count() == 0
-    
+
     def test_invalid_login(self, client):
         c = client()
         response = c.post("/auth/users/login/", {
@@ -80,4 +80,4 @@ class TestUsers:
         })
         assert response.status_code == 400
         assert models.User.objects.count() == 0
-        assert response.json() == {'email': ['This field is required.']} 
+        assert response.json() == {'email': ['This field is required.']}

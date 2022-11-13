@@ -1,0 +1,212 @@
+{
+    "project": "oop-shop-core",
+    "apps": [
+        {
+            "name": "api",
+            "defaults": {
+                "max_length": 150,
+                "id_field": "id",
+                "null": false
+            },
+            "models": [
+                {
+                    "name": "Manufacturer",
+                    "id_field": "identifier",
+                    "fields": [
+                        {
+                            "name": "identifier",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "name",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "description",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        }
+                    ],
+                    "actions": ["create", "update", "retrieve", "list"]
+                },
+                {
+                    "name": "Collection",
+                    "id_field": "identifier",
+                    "fields": [
+                        {
+                            "name": "identifier",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "name",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "description",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": true
+                        }
+                    ],
+                    "actions": ["create", "update", "retrieve", "list"]
+                },
+                {
+                    "name": "Category",
+                    "id_field": "identifier",
+                    "fields": [
+                        {
+                            "name": "identifier",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "name",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "description",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": true
+                        }
+                    ],
+                    "actions": ["create", "update", "retrieve", "list"]
+                },
+                {
+                    "name": "Product",
+                    "id_field": "identifier",
+                    "fields": [
+                        {
+                            "name": "identifier",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "category",
+                            "type": "ForeignKey",
+                            "foreign_key": "Category",
+                            "foreign_key_field": "identifier",
+                            "null": false
+                        },
+                        {
+                            "name": "manufacturer",
+                            "type": "ForeignKey",
+                            "foreign_key": "Manufacturer",
+                            "foreign_key_field": "identifier",
+                            "null": false
+                        },
+                        {
+                            "name": "collection",
+                            "type": "ForeignKey",
+                            "foreign_key": "Collection",
+                            "foreign_key_field": "identifier",
+                            "null": false
+                        },
+                        {
+                            "name": "name",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "description",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "price",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "color",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        }
+                    ],
+                    "actions": ["create", "update", "retrieve", "list"]
+                },
+                {
+                    "name": "Order",
+                    "id_field": "identifier",
+                    "fields": [
+                        {
+                            "name": "name",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "user",
+                            "type": "ForeignKey",
+                            "foreign_key": "User",
+                            "foreign_key_field": "identifier",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "date",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        }
+                    ],
+                    "actions": ["create", "update", "retrieve", "list"],
+                    "search_fields": ["user"],
+                    "ordering_fields": ["user"],
+                    "default_ordering_field_name": "name",
+                    "default_ordering_field_name_sign": "+"
+                },
+                {
+                    "name": "OrderedProduct",
+                    "id_field": "identifier",
+                    "fields": [
+                        {
+                            "name": "product",
+                            "type": "ForeignKey",
+                            "foreign_key": "Product",
+                            "foreign_key_field": "identifier",
+                            "null": false
+                        },
+                        {
+                            "name": "order",
+                            "type": "ForeignKey",
+                            "foreign_key": "Order",
+                            "foreign_key_field": "identifier",
+                            "null": false
+                        },
+                        {
+                            "name": "price",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        },
+                        {
+                            "name": "quantity",
+                            "type": "CharField",
+                            "max_length": 100,
+                            "null": false
+                        }
+                    ],
+                    "actions": ["create", "update", "retrieve", "list"]
+                }
+            ]
+        }
+    ]
+}
