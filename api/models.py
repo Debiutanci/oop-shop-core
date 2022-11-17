@@ -3,7 +3,7 @@ from abc import abstractmethod
 from django.db import models
 from django.utils.crypto import get_random_string
 
-from api import exceptions
+from api import exceptions, oop
 
 
 def random_string_length_20():
@@ -63,7 +63,7 @@ class Product(OopShopModel):
             "name": self.name,
             "description": self.description,
             "price": self.price,
-            "color": self.color,
+            "color": oop.Color(self.color).json(),
             "category": self.category.name,
             "manufacturer": self.manufacturer.name,
             "collection": None
