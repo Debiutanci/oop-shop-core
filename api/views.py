@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from api import models, serializers, exceptions, utils
 
@@ -35,6 +36,47 @@ class ProductViewSet(ModelViewSet):  # pylint: disable=R0901
 	lookup_field = "identifier"
 	lookup_url_kwarg = "identifier"
 	http_method_names = ["post", "get", "put"]
+
+	@action(
+        detail=True,
+        url_path="add-to-cart",
+        methods=["post"],
+		serializer_class=serializers.AddToCartSerializer
+    )
+	def add_to_cart(self, request, **kwargs):  # pylint: disable=R0914, W0613
+		serializer = serializers.AddToCartSerializer(data=request.data)
+		if not serializer.is_valid():
+			raise exceptions.BadRequest(serializer.errors)
+		user_identifier = serializer.validated_data["user"]
+		cart_instance = models.Cart.objects.get(user=user_identifier)
+		product = self.get_object()
+		models.CartProductRel.objects.create(
+            cart=cart_instance,
+            product=product,
+            quantity=serializer.validated_data["quantity"]
+        )
+		return Response(status=status.HTTP_204_NO_CONTENT)
+
+	@action(
+        detail=True,
+        url_path="remove-from-cart",
+        methods=["post"],
+		serializer_class=serializers.RemoveFromCartSerializer
+    )
+	def remove_from_cart(self, request, **kwargs):  # pylint: disable=R0914, W0613
+		serializer = serializers.RemoveFromCartSerializer(data=request.data)
+		if not serializer.is_valid():
+			raise exceptions.BadRequest(serializer.errors)
+		user_identifier = serializer.validated_data["user"]
+		cart_instance = models.Cart.objects.get(user=user_identifier)
+		product = self.get_object()
+		to_del_identifier = None
+		for cart_rel in cart_instance.cart_products.all():
+			if cart_rel.product.identifier == product.identifier:
+				to_del_identifier = cart_rel.identifier
+		to_del_instance = models.CartProductRel.objects.get(identifier=to_del_identifier)
+		to_del_instance.delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
