@@ -149,3 +149,7 @@ class AddToCartSerializer(serializers.Serializer):
 		if "quantity" not in attrs:
 			attrs["quantity"] = 1
 		return attrs
+
+
+class RemoveFromCartSerializer(serializers.Serializer):
+	user = serializers.CharField()
