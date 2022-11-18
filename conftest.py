@@ -35,7 +35,6 @@ def sample_database():
             email="jan.kowalski@test.pl",
             password="test1234"
         )
-        identifier = user.identifier
 
         category = models.Category.objects.create(name="category1", description="cat_des_1")
         manufacturer = models.Manufacturer.objects.create(name="manufacturer1", description="man_des_1")
@@ -51,7 +50,7 @@ def sample_database():
             color="czerwony"
         )
 
-        cart = models.Cart.objects.create(user=identifier)
+        cart = models.Cart.objects.get(user=user.identifier)
         models.CartProductRel.objects.create(
             cart=cart,
             product=product,

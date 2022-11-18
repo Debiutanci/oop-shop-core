@@ -139,3 +139,17 @@ class FavouriteSerializer(serializers.ModelSerializer):
 
 	def to_representation(self, instance):
 		return instance.display()
+
+
+class AddToCartSerializer(serializers.Serializer):
+	user = serializers.CharField()
+	quantity = serializers.IntegerField(required=False)
+
+	def validate(self, attrs):
+		if "quantity" not in attrs:
+			attrs["quantity"] = 1
+		return attrs
+
+
+class RemoveFromCartSerializer(serializers.Serializer):
+	user = serializers.CharField()

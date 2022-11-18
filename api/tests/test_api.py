@@ -121,3 +121,24 @@ class TestApi:
 		r = c.get("/api/products/")
 		assert r.status_code == 200
 		assert len(r.json()) == 7
+
+	def test_add_and_remove_to_from_cart(self, sample_database):
+		sample_database()
+		c = Client()
+		user = User.objects.all()[0]
+
+		p = models.Product.objects.all()[0]
+		assert models.CartProductRel.objects.count() == 1
+		r = c.post(f"/api/products/{p.identifier}/add-to-cart/", {
+			"user": user.identifier,
+		})
+
+		assert r.status_code == 204
+		assert models.CartProductRel.objects.count() == 2
+
+		r = c.post(f"/api/products/{p.identifier}/remove-from-cart/", {
+			"user": user.identifier,
+		})
+
+		assert r.status_code == 204
+		assert models.CartProductRel.objects.count() == 1
