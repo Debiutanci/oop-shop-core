@@ -1,11 +1,13 @@
 import pytest
 from authorization import models
+from api.models import Cart
 
 @pytest.mark.django_db
 class TestUsers:
     def test_register_login_user_and_logout(self, client):
         # creating user in kc and in database
         assert models.User.objects.count() == 0
+        assert Cart.objects.count() == 0
         c = client()
         response = c.post("/auth/users/", {
             "name": "test_name",
@@ -17,6 +19,7 @@ class TestUsers:
         assert response.status_code == 201
         assert response.json()["identifier"]
         assert models.User.objects.count() == 1
+        assert Cart.objects.count() == 1
         # test invalid password
         response = c.post("/auth/users/login/", {
             "email": "test@mail.pl",
