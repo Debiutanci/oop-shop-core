@@ -121,7 +121,7 @@ class TestApi:
 		r = c.get("/api/products/")
 		assert r.status_code == 200
 		assert len(r.json()) == 7
-	
+
 	def test_add_and_remove_to_from_cart(self, sample_database):
 		sample_database()
 		c = Client()
