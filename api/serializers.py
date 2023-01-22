@@ -4,8 +4,11 @@ from rest_framework.exceptions import ValidationError
 from api import models, validators
 
 
-class ManufacturerSerializer(serializers.ModelSerializer):
+class AbstractOopSerializer(serializers.ModelSerializer):
 	identifier = serializers.CharField(read_only=True)
+
+
+class ManufacturerSerializer(AbstractOopSerializer):
 
 	class Meta:
 		model = models.Manufacturer
@@ -15,8 +18,7 @@ class ManufacturerSerializer(serializers.ModelSerializer):
 		return data
 
 
-class CollectionSerializer(serializers.ModelSerializer):
-	identifier = serializers.CharField(read_only=True)
+class CollectionSerializer(AbstractOopSerializer):
 
 	class Meta:
 		model = models.Collection
@@ -26,8 +28,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 		return data
 
 
-class CategorySerializer(serializers.ModelSerializer):
-	identifier = serializers.CharField(read_only=True)
+class CategorySerializer(AbstractOopSerializer):
 
 	class Meta:
 		model = models.Category
@@ -37,8 +38,7 @@ class CategorySerializer(serializers.ModelSerializer):
 		return data
 
 
-class ProductSerializer(serializers.ModelSerializer):
-	identifier = serializers.CharField(read_only=True)
+class ProductSerializer(AbstractOopSerializer):
 	category = serializers.CharField(allow_null=True)
 	manufacturer = serializers.CharField(allow_null=True)
 	collection = serializers.CharField(allow_null=True)
@@ -67,8 +67,7 @@ class ProductSerializer(serializers.ModelSerializer):
 		return obj.display()
 
 
-class OrderCreateSerializer(serializers.ModelSerializer):
-	identifier = serializers.CharField(read_only=True)
+class OrderCreateSerializer(AbstractOopSerializer):
 	cart = serializers.CharField()
 
 	class Meta:
@@ -90,8 +89,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 		return attrs
 
 
-class OrderSerializer(serializers.ModelSerializer):
-	identifier = serializers.CharField(read_only=True)
+class OrderSerializer(AbstractOopSerializer):
 	ordered_products = serializers.ReadOnlyField()
 	status = serializers.ReadOnlyField(source="get_status_display")
 	created = serializers.ReadOnlyField()
@@ -123,8 +121,7 @@ class OrderedProductSerializer(serializers.ModelSerializer):
 		return data
 
 
-class FavouriteSerializer(serializers.ModelSerializer):
-	identifier = serializers.CharField(read_only=True)
+class FavouriteSerializer(AbstractOopSerializer):
 	product = serializers.CharField()
 
 	class Meta:
