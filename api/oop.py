@@ -42,7 +42,7 @@ class Color:
 
     def __init__(self, name) -> None:
         self.__name = name
-        self.__hex = self.__get_color_hex(self.name)
+        self.__hex = self.__get_color_hex(self.__name)
 
     def get_name(self):
         return self.__name
@@ -53,8 +53,8 @@ class Color:
     def set_name(self, new_name):
         self.__name = new_name
     
-    def set_color(self, new_color):
-        self.__color = new_color
+    def set_color(self, new_hex):
+        self.__hex = new_hex
 
     def json(self):
         return {
