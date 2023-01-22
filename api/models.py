@@ -136,6 +136,7 @@ class CartProductRel(OopShopModel):
     def display(self) -> dict:
         return {
             "identifier": self.identifier,
+            "quantity": self.quantity,
             "product": self.product.display()
         }
 

@@ -50,11 +50,20 @@ class ProductViewSet(ModelViewSet):  # pylint: disable=R0901
 		user_identifier = serializer.validated_data["user"]
 		cart_instance = models.Cart.objects.get(user=user_identifier)
 		product = self.get_object()
-		models.CartProductRel.objects.create(
-            cart=cart_instance,
-            product=product,
-            quantity=serializer.validated_data["quantity"]
-        )
+
+		increment_checker = True
+		for relation in cart_instance.cart_products.all():
+			if relation.product.identifier == product.identifier:
+				relation.quantity += 1
+				relation.save()
+				increment_checker = False
+
+		if increment_checker:
+			models.CartProductRel.objects.create(
+        	    cart=cart_instance,
+        	    product=product,
+        	    quantity=serializer.validated_data["quantity"]
+        	)
 		return Response(status=status.HTTP_204_NO_CONTENT)
 
 	@action(

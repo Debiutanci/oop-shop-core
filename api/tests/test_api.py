@@ -135,22 +135,37 @@ class TestApi:
 		})
 
 		assert r.status_code == 204
-		assert models.CartProductRel.objects.count() == 2
+		assert models.CartProductRel.objects.count() == 1
 
 		r = c.post(f"/api/products/{p.identifier}/remove-from-cart/", {
 			"user": user.identifier,
 		})
 
 		assert r.status_code == 204
-		assert models.CartProductRel.objects.count() == 1
+		assert models.CartProductRel.objects.count() == 0
 
 		r = c.get("/api/carts/")
 		assert r.status_code == 200
+
+		r = c.post(f"/api/products/{p.identifier}/add-to-cart/", {
+			"user": user.identifier,
+		})
 
 		r = c.post("/api/carts/my-cart/", {
 			"user": 1
 		})
 		assert r.status_code == 200
+		assert r.json()["cart"]["cart_products"][0]["quantity"] == 1
+
+		r = c.post(f"/api/products/{p.identifier}/add-to-cart/", {
+			"user": user.identifier,
+		})
+
+		r = c.post("/api/carts/my-cart/", {
+			"user": 1
+		})
+		assert r.status_code == 200
+		assert r.json()["cart"]["cart_products"][0]["quantity"] == 2
 
 		instance = models.Cart.objects.all()[0]
 		instance.clean()
