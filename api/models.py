@@ -125,7 +125,7 @@ class Cart(OopShopModel):
 
     def clean(self):
         for relation in self.cart_products.all():
-            self.remove(relation)
+            self.cart_products.remove(relation)
 
 
 class CartProductRel(OopShopModel):
