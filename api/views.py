@@ -160,7 +160,7 @@ class CartViewSet(ModelViewSet):  # pylint: disable=R0901
         url_path="my-cart",
         methods=["post"],
     )
-	def my_cart(self, request, pk=None, *args, **kwargs):
+	def my_cart(self, request, pk=None, *args, **kwargs):  # pylint: disable=W0613
 		serializer = serializers.GetCartSerializer(data=request.data)
 		if not serializer.is_valid():
 			raise exceptions.BadRequest(serializer.errors)
