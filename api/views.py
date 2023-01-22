@@ -137,6 +137,8 @@ class OrderViewSet(ModelViewSet):  # pylint: disable=R0901
 		order.save()
 
 		utils.assign_product_to_order(order, cart.cart_products)
+		cart.clean()
+		cart.save()
 		return Response(order.display(), status=status.HTTP_201_CREATED)
 
 
