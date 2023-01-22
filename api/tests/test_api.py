@@ -151,3 +151,6 @@ class TestApi:
 			"user": 1
 		})
 		assert r.status_code == 200
+
+		instance = models.Cart.objects.all()[0]
+		instance.clean()
