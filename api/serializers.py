@@ -153,3 +153,17 @@ class AddToCartSerializer(serializers.Serializer):
 
 class RemoveFromCartSerializer(serializers.Serializer):
 	user = serializers.CharField()
+
+
+class CartSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = models.Cart
+		fields = ("user", "cart_products")
+
+	def to_representation(self, instance):
+		return instance.display()
+
+
+class GetCartSerializer(serializers.Serializer):
+	user = serializers.CharField()

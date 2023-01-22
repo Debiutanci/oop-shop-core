@@ -12,6 +12,7 @@ class TestApi:
 		response = c.get("/api/")
 		assert response.status_code == 200
 		assert response.json() == {
+			"carts": "http://testserver/api/carts/",
 			"manufacturers": "http://testserver/api/manufacturers/",
 			"collections": "http://testserver/api/collections/",
 			"favourities": "http://testserver/api/favourities/",
@@ -142,3 +143,11 @@ class TestApi:
 
 		assert r.status_code == 204
 		assert models.CartProductRel.objects.count() == 1
+
+		r = c.get("/api/carts/")
+		assert r.status_code == 200
+
+		r = c.post("/api/carts/my-cart/", {
+			"user": 1
+		})
+		assert r.status_code == 200

@@ -137,3 +137,24 @@ class FavouriteViewSet(ModelViewSet):  # pylint: disable=R0901
 	lookup_field = "identifier"
 	lookup_url_kwarg = "identifier"
 	http_method_names = ["post", "get", "put"]
+
+
+class CartViewSet(ModelViewSet):  # pylint: disable=R0901
+	serializer_class = serializers.CartSerializer
+	queryset = models.Cart.objects.all()
+	lookup_field = "identifier"
+	lookup_url_kwarg = "identifier"
+	http_method_names = ["post", "get", "put"]
+
+	@action(
+        detail=False,
+        url_path="my-cart",
+        methods=["post"],
+    )
+	def my_cart(self, request, pk=None, *args, **kwargs):
+		serializer = serializers.GetCartSerializer(data=request.data)
+		if not serializer.is_valid():
+			raise exceptions.BadRequest(serializer.errors)
+		user_identifier = serializer.validated_data["user"]
+		cart_instance = models.Cart.objects.get(user=user_identifier)
+		return Response({"cart": cart_instance.display()})

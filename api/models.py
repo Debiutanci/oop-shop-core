@@ -114,7 +114,14 @@ class Cart(OopShopModel):
     user = models.CharField(max_length=20, null=False, unique=True)
 
     def display(self) -> dict:
-        return {}
+        cp = []
+        for p in self.cart_products.all():
+            cp.append(p.display())
+
+        return {
+            "user": self.user,
+            "cart_products": cp
+        }
 
     def clean(self):
         for relation in self.cart_products.all():
@@ -129,7 +136,7 @@ class CartProductRel(OopShopModel):
     def display(self) -> dict:
         return {
             "identifier": self.identifier,
-            "product": self.product.identifier
+            "product": self.product.display()
         }
 
 
