@@ -119,6 +119,7 @@ class Cart(OopShopModel):
             cp.append(p.display())
 
         return {
+            "identifier": self.identifier,
             "user": self.user,
             "cart_products": cp
         }
